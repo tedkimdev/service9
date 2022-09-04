@@ -1,5 +1,5 @@
 # Build the Go Binary
-FROM golang:1.19 as build_sales-api
+FROM golang:1.19 as build-service-api
 ENV CGO_ENABLED 0
 ARG BUILD_REF
 
@@ -8,13 +8,13 @@ COPY . /service
 
 # Build the service binary.
 WORKDIR /service
-RUN go build -ldflags "-X main.build=${BUILD_REF}"
+RUN go build -o service -ldflags "-X main.build=${BUILD_REF}"
 
 # Run the Go Binary in Alpine.
 FROM alpine:3.14
 ARG BUILD_DATE
 ARG BUILD_REF
-COPY --from=build_sales-api /service /service/service
+COPY --from=build-service-api /service/service /service/service
 WORKDIR /service
 CMD ["./service"]
 
