@@ -2,7 +2,11 @@ module github.com/tedkimdev/service9
 
 go 1.19
 
-require go.uber.org/zap v1.23.0
+require (
+	github.com/ardanlabs/conf v1.5.0
+	go.uber.org/automaxprocs v1.5.1
+	go.uber.org/zap v1.23.0
+)
 
 require (
 	go.uber.org/atomic v1.7.0 // indirect
