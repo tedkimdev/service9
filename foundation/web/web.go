@@ -51,7 +51,7 @@ func (a *App) Handle(method string, group string, path string, handler Handler, 
 		// Call the wrapped handler functions.
 		if err := handler(r.Context(), rw, r); err != nil {
 
-			/// INJECT CODE
+			// INJECT CODE
 			return
 		}
 
