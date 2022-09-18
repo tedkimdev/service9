@@ -1,6 +1,7 @@
 package testgrp
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 
@@ -13,14 +14,15 @@ type Handlers struct {
 }
 
 // Test handler is for development.
-func (h *Handlers) Test(rw http.ResponseWriter, r *http.Request) {
+func (h *Handlers) Test(ctx context.Context, rw http.ResponseWriter, r *http.Request) error {
 	status := struct {
 		Status string
 	}{
 		Status: "OK",
 	}
-	json.NewEncoder(rw).Encode(status)
 
 	statusCode := http.StatusOK
 	h.Log.Infow("liveness", "statusCode", statusCode, "method", r.Method, "path", r.URL.Path, "remoteaddr", r.RemoteAddr)
+
+	return json.NewEncoder(rw).Encode(status)
 }

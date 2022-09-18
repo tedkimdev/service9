@@ -30,3 +30,28 @@ func NewApp(shutdown chan os.Signal) *App {
 		shutdown:   shutdown,
 	}
 }
+
+// Handle sets a handler function for a given HTTP method and path pair
+// to the application server mux.
+func (a *App) Handle(method string, group string, path string, handler Handler) {
+
+	// PRE CODE PROCESSING
+
+	h := func(rw http.ResponseWriter, r *http.Request) {
+
+		if err := handler(r.Context(), rw, r); err != nil {
+
+			// ERROR HANDLING
+			return
+		}
+	}
+
+	// POST CODE PROCESSING
+
+	finalPath := path
+	if group != "" {
+		finalPath = "/" + group + path
+	}
+
+	a.ContextMux.Handle(method, finalPath, h)
+}
