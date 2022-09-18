@@ -19,34 +19,44 @@ type Handler func(ctx context.Context, w http.ResponseWriter, r *http.Request) e
 type App struct {
 	*httptreemux.ContextMux
 	shutdown chan os.Signal
+	mw       []Middleware
 }
 
 // NewApp creates an App value that handle a set of routes for the application.
-func NewApp(shutdown chan os.Signal) *App {
+func NewApp(shutdown chan os.Signal, mw ...Middleware) *App {
 	mux := httptreemux.NewContextMux()
 
 	return &App{
 		ContextMux: mux,
 		shutdown:   shutdown,
+		mw:         mw,
 	}
 }
 
 // Handle sets a handler function for a given HTTP method and path pair
 // to the application server mux.
-func (a *App) Handle(method string, group string, path string, handler Handler) {
+func (a *App) Handle(method string, group string, path string, handler Handler, mw ...Middleware) {
 
-	// PRE CODE PROCESSING
+	// First wrap handler specific middleware around this handler.
+	handler = wrapMiddleware(mw, handler)
 
+	// Add the application's general middleware to the handler chain.
+	handler = wrapMiddleware(a.mw, handler)
+
+	// The function to execute for each request
 	h := func(rw http.ResponseWriter, r *http.Request) {
 
+		// INJECT CODE
+
+		// Call the wrapped handler functions.
 		if err := handler(r.Context(), rw, r); err != nil {
 
-			// ERROR HANDLING
+			/// INJECT CODE
 			return
 		}
-	}
 
-	// POST CODE PROCESSING
+		// INJECT CODE
+	}
 
 	finalPath := path
 	if group != "" {
