@@ -15,6 +15,10 @@ SHELL := /bin/bash
 # openssl genpkey -algorithm RSA -out private.pem -pkeyopt rsa_keygen_bits:2048
 # openssl rsa -pubout -in private.pem -out public.pem
 # ./sales-admin genkey
+
+# Testing Auth
+# curl -il http://localhost:3000/v1/testauth
+# curl -H "Authorization: Bearer ${TOKEN}" http://localhost:3000/v1/testauth
 # =====================================================================
 
 run:
@@ -25,6 +29,13 @@ admin:
 
 build:
 	go build -ldflags "-X main.build=local"
+
+# ==============================================================================
+# Running tests within the local computer
+
+test:
+	go test ./... -count=1
+	staticcheck -checks=all ./...
 
 # =====================================================================
 # Building containers

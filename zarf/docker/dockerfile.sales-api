@@ -14,6 +14,7 @@ RUN go build -o sales-api -ldflags "-X main.build=${BUILD_REF}"
 FROM alpine:3.14
 ARG BUILD_DATE
 ARG BUILD_REF
+COPY --from=build-sales-api --chown=sales:sales /service/zarf/keys/. /service/zarf/keys/.
 COPY --from=build-sales-api /service/app/services/sales-api/sales-api /service/sales-api
 WORKDIR /service
 CMD ["./sales-api"]

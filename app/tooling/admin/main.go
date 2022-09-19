@@ -67,7 +67,7 @@ func genToken() error {
 			ExpiresAt: time.Now().Add(8760 * time.Hour).Unix(),
 			IssuedAt:  time.Now().UTC().Unix(),
 		},
-		Roles: []string{"ADMIN"},
+		Roles: []string{"USER"},
 	}
 
 	method := jwt.GetSigningMethod("RS256")
@@ -143,8 +143,8 @@ func genToken() error {
 	return nil
 }
 
-// GenKey creates an x509 private/public key for auth tokens.
-func GenKey() error {
+// genKey creates an x509 private/public key for auth tokens.
+func genKey() error {
 
 	// Generate a new private key.
 	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
