@@ -10,8 +10,8 @@ var ErrInvalidID = errors.New("ID is not in its proper form")
 
 // ErrorResponse is the form used for API responses from failures in the API.
 type ErrorResponse struct {
-	Error  string            `json:"error"`
-	Fields map[string]string `json:"fields,omitempty"`
+	Error  string `json:"error"`
+	Fields string `json:"fields,omitempty"`
 }
 
 // RequestError is used to pass an error during the request through the
