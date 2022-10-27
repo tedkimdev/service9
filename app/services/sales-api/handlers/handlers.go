@@ -62,7 +62,7 @@ type APIMuxConfig struct {
 	DB       *sqlx.DB
 }
 
-// API mux constructs an http.Handler with all application routes defined.
+// APIMux constructs an http.Handler with all application routes defined.
 func APIMux(cfg APIMuxConfig) *web.App {
 
 	// Construct the web.App which holds all routes as well as common Middleware.

@@ -10,8 +10,7 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/lib/pq"
-	_ "github.com/lib/pq" // Calls init function.
+	"github.com/lib/pq" // Calls init function.
 	"github.com/tedkimdev/service9/foundation/web"
 	"go.uber.org/zap"
 )

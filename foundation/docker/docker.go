@@ -35,7 +35,7 @@ func StartContainer(t *testing.T, image string, port string, args ...string) *Co
 	out.Reset()
 	cmd.Stdout = &out
 	if err := cmd.Run(); err != nil {
-		t.Fatalf("could not inspect container %s: %v, id, err")
+		t.Fatalf("could not inspect container %s: %v", id, err)
 	}
 
 	var doc []map[string]interface{}
