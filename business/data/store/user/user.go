@@ -56,7 +56,7 @@ func (s Store) Create(ctx context.Context, nu NewUser, now time.Time) (User, err
 	VALUES
 		(:user_id, :name, :email, :password_hash, :roles, :date_created, :date_updated)`
 
-	if err := database.NamedExecContext(ctx, s.log, s.db, q, usr); err != nil {
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, &usr); err != nil {
 		return User{}, fmt.Errorf("inserting user: %w", err)
 	}
 
@@ -107,7 +107,7 @@ func (s Store) Update(ctx context.Context, claims auth.Claims, userID string, uu
 	WHERE
 		user_id = :user_id`
 
-	if err := database.NamedExecContext(ctx, s.log, s.db, q, usr); err != nil {
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, &usr); err != nil {
 		return fmt.Errorf("updating userID[%s]: %w", userID, err)
 	}
 
@@ -137,7 +137,7 @@ func (s Store) Delete(ctx context.Context, claims auth.Claims, userID string) er
 	WHERE
 		user_id = :user_id`
 
-	if err := database.NamedExecContext(ctx, s.log, s.db, q, data); err != nil {
+	if err := database.NamedExecContext(ctx, s.log, s.db, q, &data); err != nil {
 		return fmt.Errorf("deleting userID[%s]: %w", userID, err)
 	}
 
@@ -164,9 +164,9 @@ func (s Store) Query(ctx context.Context, pageNumber int, rowsPerPage int) ([]Us
 	OFFSET :offset ROWS FETCH NEXT :rows_per_page ROWS ONLY`
 
 	var users []User
-	if err := database.NamedQuerySlice(ctx, s.log, s.db, q, data, &users); err != nil {
-		if err == database.ErrDBNotFound {
-			return nil, database.ErrDBNotFound
+	if err := database.NamedQuerySlice(ctx, s.log, s.db, q, &data, &users); err != nil {
+		if err == database.ErrNotFound {
+			return nil, database.ErrNotFound
 		}
 		return nil, fmt.Errorf("selecting users: %w", err)
 	}
@@ -200,9 +200,9 @@ func (s Store) QueryByID(ctx context.Context, claims auth.Claims, userID string)
 		user_id = :user_id`
 
 	var usr User
-	if err := database.NamedQueryStruct(ctx, s.log, s.db, q, data, &usr); err != nil {
-		if err == database.ErrDBNotFound {
-			return User{}, database.ErrDBNotFound
+	if err := database.NamedQueryStruct(ctx, s.log, s.db, q, &data, &usr); err != nil {
+		if err == database.ErrNotFound {
+			return User{}, database.ErrNotFound
 		}
 		return User{}, fmt.Errorf("selecting userID[%q]: %w", userID, err)
 	}
@@ -234,8 +234,8 @@ func (s Store) QueryByEmail(ctx context.Context, claims auth.Claims, email strin
 
 	var usr User
 	if err := database.NamedQueryStruct(ctx, s.log, s.db, q, data, &usr); err != nil {
-		if err == database.ErrDBNotFound {
-			return User{}, database.ErrDBNotFound
+		if err == database.ErrNotFound {
+			return User{}, database.ErrNotFound
 		}
 		return User{}, fmt.Errorf("selecting email[%q]: %w", email, err)
 	}
@@ -268,8 +268,8 @@ func (s Store) Authenticate(ctx context.Context, now time.Time, email, password 
 
 	var usr User
 	if err := database.NamedQueryStruct(ctx, s.log, s.db, q, data, &usr); err != nil {
-		if err == database.ErrDBNotFound {
-			return auth.Claims{}, database.ErrDBNotFound
+		if err == database.ErrNotFound {
+			return auth.Claims{}, database.ErrNotFound
 		}
 		return auth.Claims{}, fmt.Errorf("selecting user[%q]: %w", email, err)
 	}
